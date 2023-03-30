@@ -1,0 +1,19 @@
+<h1>Food Truck Map</h1>
+<style type="text/css">
+  /* Set the size of the div element that contains the map */
+  #map {
+    height: 600px;
+    width: 100%;
+  }
+</style>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap&v=weekly"
+    defer
+></script>
+<form phx-submit="search-food">
+  <input name="food" placeholder="Find Food like Acai, Chinese, or Breakfast" value={@food_search}>
+</form>
+<div id="map-container">
+  <div id="map" phx-update="ignore" phx-hook="Map" data-food_trucks={@food_trucks}></div>
+</div>
