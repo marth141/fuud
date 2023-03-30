@@ -58,6 +58,9 @@ class LatLng {
     }
 }
 
+/**
+ * Global for having just one map marker info window open at a time.
+ */
 let currWindow = false
 
 let Hooks = {}
@@ -89,23 +92,37 @@ Hooks.Map = {
              * @param {FoodTruck} foodTruck 
              */
             (foodTruck) => {
-                const contentString =
-                    `${foodTruck.applicant}</br></br>
-                    Address</br>${foodTruck.address}, San Francisco, CA</br></br>
-                    <a href=${foodTruck.schedule}>Schedule</a></br></br>
-                    Food</br>${foodTruck.food_items}`
+                /**
+                 * Creates info window for map marker
+                 */
                 const infowindow = new google.maps.InfoWindow({
-                    content: contentString,
+                    content:
+                        `${foodTruck.applicant}</br></br>
+                        Address</br>${foodTruck.address}, San Francisco, CA</br></br>
+                        <a href=${foodTruck.schedule}>Schedule</a></br></br>
+                        Food</br>${foodTruck.food_items}`,
                 })
+                /**
+                 * Creates map marker with red map pin using latitude and longitude
+                 */
                 const marker = new google.maps.Marker({
                     position: { lat: parseFloat(foodTruck.latitude), lng: parseFloat(foodTruck.longitude) },
                     map,
                     icon: "/images/map_pin_red.png"
                 })
+                /**
+                 * Adds click event to map where if you click anywhere on the map,
+                 * if an info window is open it'll close.
+                 */
                 google.maps.event.addListener(map, "click", function () {
                     infowindow.close();
                     global = "closed"
                 });
+                /**
+                 * Adds click event to map markers where if there is another map marker
+                 * that has an open info window, that existing window will close
+                 * and the new one will open when a different map marker is clicked.
+                 */
                 google.maps.event.addListener(marker, 'click', function () {
                     if (currWindow) {
                         currWindow.close();
@@ -123,7 +140,7 @@ Hooks.Map = {
         window.initMap = this.initMap()
     },
     /**
-     * Built in updated method used when updating map
+     * Built in updated method used when updating map such as when searching for food
      * Docs: https://hexdocs.pm/phoenix_live_view/js-interop.html#client-hooks-via-phx-hook
      */
     updated() {
